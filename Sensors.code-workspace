@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "EngineSensor",
+			"path": "EngineSensor\\EngineSensor"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"functional": "cpp",
+			"array": "cpp",
+			"deque": "cpp",
+			"forward_list": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"vector": "cpp",
+			"initializer_list": "cpp",
+			"regex": "cpp"
+		}
+	}
+}

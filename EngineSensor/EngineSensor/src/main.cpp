@@ -12,7 +12,9 @@
 #include "ADS1015.h"
 #include "transforms/linear.h"
 #include "signalk/signalk_output.h"
+#include "wiring_helpers.h"
 
+#define ONE_WIRE_BUS D4
 // SensESP builds upon the ReactESP framework. Every ReactESP application
 // defines an "app" object vs defining a "main()" method.
 ReactESP app([]() {
@@ -62,6 +64,9 @@ ReactESP app([]() {
   // is simply a label to display what you're configuring in the Configuration UI. 
   const char* config_path_calibrate = "/sensors/engine_rpm/calibrate";
   const char* config_path_skpath = "/sensors/engine_rpm/sk";
+  const char* config_path_temp_sk = "propulsion.left.temperature";
+  const char* config_path_temp_sensor = "/sensors/temp/sensor";
+  const char* config_path_temp_offset = "/sensors/temp/offset";
   const char* config_path_adc_linear = "/sensors/adc/offset";
   const char* config_path_adc_channel = "/sensors/adc/channel";
 //////////
@@ -79,13 +84,14 @@ const uint read_delay = 500;
   auto* pSensor = new DigitalInputCounter(14, INPUT_PULLUP, RISING, read_delay);
 
   pSensor->connectTo(new Frequency(multiplier, config_path_calibrate))  // connect the output of pSensor to the input of Frequency()
-        ->connectTo(new SKOutputNumber(sk_path, config_path_skpath));   // connect the output of Frequency() to a SignalK Output as a number
+         ->connectTo(new SKOutputNumber(sk_path, config_path_skpath));   // connect the output of Frequency() to a SignalK Output as a number
 
 
   auto* adc = new ADS1015(0x49, "");
 
   const float adc_multiplier = 1.0;
   const float adc_offset = 0.0;
+
   for (int i = 0; i < 4; i++)
   {
     auto* channel = new ADS1015Channel(i, adc, "");
@@ -94,7 +100,21 @@ const uint read_delay = 500;
     channel->connectTo(pTransform)
            ->connectTo(new SKOutputNumber(String(adc_sk_path) + String(i), String(config_path_adc_channel) + String(i)));
   }
-  
+
+  auto*owSensors = new DallasTemperatureSensors(ONE_WIRE_BUS, config_path_temp_sensor);
+
+  OWDevAddr*tempAddress;
+  const float temp_multiplier = 1.0;
+  const float temp_offset = 0.0;
+  uint8_t count = owSensors->sensors->getDeviceCount();
+
+  for(int i = 0; i < count; i++)
+  {
+    (new OneWireTemperature(owSensors))
+            ->connectTo(new Linear(temp_multiplier, temp_offset, String(config_path_temp_offset) + String(i)))
+            ->connectTo(new SKOutputNumber(String(config_path_temp_sk) + String(i), String(config_path_temp_sensor) + String(i)));
+    //auto*tempSensor = new OneWireTemperature(owSensors, String(config_path_tempsensor) + String(i));
+  }
 
   // Start the SensESP application running. Because of everything that's been set up above,
   // it constantly monitors the interrupt pin, and every read_delay ms, it sends the 
