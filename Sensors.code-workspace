@@ -3,6 +3,9 @@
 		{
 			"name": "EngineSensor",
 			"path": "EngineSensor\\EngineSensor"
+		},
+		{
+			"path": "ChainCounter"
 		}
 	],
 	"settings": {
@@ -16,7 +19,10 @@
 			"unordered_map": "cpp",
 			"vector": "cpp",
 			"initializer_list": "cpp",
-			"regex": "cpp"
+			"regex": "cpp",
+			"tuple": "cpp",
+			"type_traits": "cpp",
+			"utility": "cpp"
 		}
 	}
 }
