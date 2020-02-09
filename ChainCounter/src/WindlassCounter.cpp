@@ -73,14 +73,19 @@ void WindlassCounter::enable()
         int interupt = digitalRead(this->interuptPin);
         int up = digitalRead(this->upPin);
         int down = digitalRead(this->downPin);
-        String status = "OK";
+        char statusText[128] = "OK\0";
+        //String status = "OK";
 
         if(up == 1 && down == 1)
         {
-            status = "ERR: UP and DOWN pressed!";
+            sprintf(statusText, "ERR: UP and DOWN pressed!");
+        }
+        else
+        {
+            sprintf(statusText, "Interup: %d, Up: %d, Down: %d, Counter: %d, Value: %d", interupt, up, down, callCounter, this->counter);
         }
 
-        this->status->UpdateStatus(status);
+        this->status->UpdateStatus(String(statusText));
 
         debugI("Interup: %d, Up: %d, Down: %d, Counter: %d, Value: %d", interupt, up, down, callCounter, this->counter);
         this->callCounter = 0;
