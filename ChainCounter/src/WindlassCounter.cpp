@@ -82,7 +82,7 @@ void WindlassCounter::enable()
         }
         else
         {
-            sprintf(statusText, "Interup: %d, Up: %d, Down: %d, Counter: %d, Value: %d", interupt, up, down, callCounter, this->counter);
+            sprintf(statusText, "U%dD%dCC%d", up, down, callCounter);
         }
 
         this->status->UpdateStatus(String(statusText));

@@ -6,6 +6,10 @@
 		},
 		{
 			"path": "ChainCounter"
+		},
+		{
+			"name": "SensESPTest",
+			"path": "C:\\Users\\info\\Documents\\PlatformIO\\Projects\\SensESPTest"
 		}
 	],
 	"settings": {
