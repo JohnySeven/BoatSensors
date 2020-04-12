@@ -10,6 +10,9 @@
 		{
 			"name": "SensESPTest",
 			"path": "C:\\Users\\info\\Documents\\PlatformIO\\Projects\\SensESPTest"
+		},
+		{
+			"path": "EnvironmentSensors"
 		}
 	],
 	"settings": {
