@@ -13,6 +13,12 @@
 		},
 		{
 			"path": "EnvironmentSensors"
+		},
+		{
+			"path": "PowerManagement"
+		},
+		{
+			"path": "PowerManagementControl"
 		}
 	],
 	"settings": {
@@ -29,7 +35,8 @@
 			"regex": "cpp",
 			"tuple": "cpp",
 			"type_traits": "cpp",
-			"utility": "cpp"
+			"utility": "cpp",
+			"random": "cpp"
 		}
 	}
 }
