@@ -19,6 +19,9 @@
 		},
 		{
 			"path": "PowerManagementControl"
+		},
+		{
+			"path": "LitePower"
 		}
 	],
 	"settings": {

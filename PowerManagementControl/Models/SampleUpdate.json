@@ -1,0 +1,21 @@
+{
+    "context": "vessels.urn:mrn:signalk:uuid:44f7d9c3-5fd4-468b-96aa-2fc86b89cbdc",
+    "updates": [
+        {
+            "source": {
+                "sentence": "RMC",
+                "talker": "GP",
+                "type": "NMEA0183",
+                "label": "GPS"
+            },
+            "$source": "GPS.GP",
+            "timestamp": "2014-04-03T08:57:59.000Z",
+            "values": [
+                {
+                    "path": "navigation.magneticVariation",
+                    "value": 0
+                }
+            ]
+        }
+    ]
+}

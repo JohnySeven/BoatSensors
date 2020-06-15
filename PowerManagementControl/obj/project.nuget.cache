@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "D8MQ/QogrTx9kIaVGawC8W8VsybLka669w+Q6mzNwiwpThkv8dL9L1oMwJkva9qhS49gfN3vI2H2cMLYi7mmTg==",
+  "dgSpecHash": "L6LcnNM89OpbnocLdyWawHe5FDikjFaXIcnIX+pRrb3jKL0gK6S8KYCkNKFaHlYwE2v6S7iF+/OGjkKKv7Y1ig==",
   "success": true,
   "projectFilePath": "D:\\Projects\\BoatSensors\\PowerManagementControl\\PowerManagementControl.csproj",
   "expectedPackageFiles": [
@@ -31,6 +31,7 @@
     "C:\\Users\\info\\.nuget\\packages\\microsoft.extensions.primitives\\3.1.3\\microsoft.extensions.primitives.3.1.3.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
+    "C:\\Users\\info\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\4.7.0\\runtime.linux-arm.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\4.7.0\\runtime.linux-arm64.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\4.7.0\\runtime.linux-x64.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
@@ -39,7 +40,11 @@
     "C:\\Users\\info\\.nuget\\packages\\system.diagnostics.eventlog\\4.7.0\\system.diagnostics.eventlog.4.7.0.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\system.io.ports\\4.7.0\\system.io.ports.4.7.0.nupkg.sha512",
     "C:\\Users\\info\\.nuget\\packages\\system.security.accesscontrol\\4.7.0\\system.security.accesscontrol.4.7.0.nupkg.sha512",
-    "C:\\Users\\info\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512"
+    "C:\\Users\\info\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512",
+    "C:\\Users\\info\\.nuget\\packages\\websocketsharp-netstandard\\1.0.1\\websocketsharp-netstandard.1.0.1.nupkg.sha512",
+    "C:\\Users\\info\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-arm\\3.1.3\\microsoft.netcore.app.runtime.linux-arm.3.1.3.nupkg.sha512",
+    "C:\\Users\\info\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-arm\\3.1.3\\microsoft.aspnetcore.app.runtime.linux-arm.3.1.3.nupkg.sha512",
+    "C:\\Users\\info\\.nuget\\packages\\microsoft.netcore.app.host.linux-arm\\3.1.3\\microsoft.netcore.app.host.linux-arm.3.1.3.nupkg.sha512"
   ],
   "logs": []
 }

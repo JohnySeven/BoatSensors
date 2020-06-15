@@ -17,6 +17,13 @@ struct PinDefinition
     bool autoUp;
 };
 
+struct AdcDefinition
+{
+    int pin;
+    float offset;
+    float multiply;
+};
+
 struct EventItem
 {
     int code;

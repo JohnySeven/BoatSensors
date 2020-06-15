@@ -49,3 +49,7 @@ D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\runtimes\
 D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\runtimes\linux\lib\netstandard2.0\System.IO.Ports.dll
 D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\runtimes\osx\lib\netstandard2.0\System.IO.Ports.dll
 D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.IO.Ports.dll
+D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\Models\SampleUpdate.json
+D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\token.json
+D:\Projects\BoatSensors\PowerManagementControl\bin\Debug\netcoreapp3.1\websocket-sharp.dll

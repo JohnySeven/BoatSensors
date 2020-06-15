@@ -4,15 +4,19 @@
 #define ITEMS_COUNT 64
 #define MAX_LINE_SIZE 128
 #define PIN_COUNT 4
-#define ev 12
+#define ADC_COUNT 2
+#define BUTTON_PIN 12
 #define FIRST_POWER_UP_TIMEOUT 6000
 
 char line[MAX_LINE_SIZE];
 int lineIndex = 0;
+PinStatus ledState = LOW;
 SimpleCLI cli;
 PowerTaskItem tasks[ITEMS_COUNT];
 EventItem events[ITEMS_COUNT];
 PinDefinition pins[PIN_COUNT];
+AdcDefinition adc[ADC_COUNT];
+
 PinStatus buttonStatus;
 unsigned long lastButtonChange = 0;
 
@@ -23,7 +27,7 @@ void HelpCommand(cmd* command)
     Serial1.println("    queue - list current queue items");
     Serial1.println("    clear - clears requests queue");
     Serial1.println("    events - lists all events");
-    Serial1.println("    adc {pin}");
+    Serial1.println("    adc - list adc with values");
     Serial1.println("    pins - list all available output pins");
     Serial1.println("    uptime - shows CPU uptime in ms");
 }
@@ -41,6 +45,13 @@ void InitPins()
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     buttonStatus = HIGH;
+
+    adc[0].pin = 7;
+    adc[0].offset = 0.0f;
+    adc[0].multiply = 0.021052f;
+    adc[1].pin = 6;
+    adc[1].offset = -512.0f;
+    adc[1].multiply = 0.0390625f;
 }
 
 int FindDoneItem()
@@ -62,12 +73,42 @@ int FindDoneItem()
 void AdcCommand(cmd*command)
 {
     Command cmd(command); // Create wrapper object
-    auto pinArg = cmd.getArgument("pin").getValue().toInt();
 
-    auto value = analogRead(pinArg);
+    for(int p = 0; p < ADC_COUNT; p++)
+    {
+        float analog = 0;
 
-    Serial1.println(value);
-    Serial1.println("Done");
+        for (int i = 0; i < 50; i++)
+        {
+            analog = analog + analogRead(adc[p].pin);
+            delay(1);
+        }
+        
+        float value = analog / 50.0f;
+
+        value = (value + adc[p].offset) * adc[p].multiply;
+
+        Serial1.print("adc=");
+        Serial1.print(p);
+        Serial1.print(",value=");
+        Serial1.println(value);
+    }
+
+    Serial1.println("OK");
+}
+
+void ToggleLED()
+{
+    if(ledState == LOW)
+    {
+        ledState = HIGH;
+    }
+    else
+    {
+        ledState = LOW;
+    }
+
+    digitalWrite(LED_BUILTIN, ledState);    
 }
 
 int AddPowerItem(int pin, PinStatus state, unsigned long delay)
@@ -135,7 +176,7 @@ void ClearQueue(cmd * command)
         tasks[i].done = true;
     }
 
-    Serial1.println("Done");
+    Serial1.println("OK");
 }
 
 void PrintQueue(cmd*command)
@@ -145,9 +186,8 @@ void PrintQueue(cmd*command)
     {
         if(!tasks[i].done)
         {
+            Serial1.print("pin=");
             Serial1.print(i);
-            Serial1.print(": pin=");
-            Serial1.print(tasks[i].pin);
             Serial1.print(",state=");
             Serial1.print(tasks[i].state);
             Serial1.print(",in=");
@@ -156,7 +196,7 @@ void PrintQueue(cmd*command)
         }
     }
 
-    Serial1.println("Done");
+    Serial1.println("OK");
 }
 
 void PrintEvents(cmd*command)
@@ -177,7 +217,7 @@ void PrintEvents(cmd*command)
         }
     }
 
-    Serial1.println("Done");    
+    Serial1.println("OK");    
 }
 
 void AddEvent(int code, int argument = 0)
@@ -200,7 +240,7 @@ void PinsCommand(cmd*cmd)
     for (int i = 0; i < PIN_COUNT; i++)
     {
         Serial1.print("pin=");
-        Serial1.print(pins[i].pin);
+        Serial1.print(i);
         Serial1.print(",state=");
         Serial1.print(pins[i].lastState);
         Serial1.println();
@@ -220,11 +260,9 @@ void setup()
 {
     Serial1.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
+    ToggleLED();
     lastButtonChange = millis();
     InitPins();
-
-    digitalWrite(LED_BUILTIN, HIGH);
-
     for (int i = 0; i < ITEMS_COUNT; i++)
     {
         tasks[i].done = true;
@@ -252,8 +290,7 @@ void setup()
     auto eventsCommands = cli.addCmd("events", PrintEvents);
 
     auto adcCommand = cli.addCmd("adc", AdcCommand);
-    adcCommand.addPosArg("pin");
-
+    
     auto pinsCommand = cli.addCmd("pins", PinsCommand);
 
     cli.setCaseSensetive(false);
@@ -261,7 +298,7 @@ void setup()
 
     cli.addCmd("uptime", UptimeCommand);
 
-    Serial1.println("OK: Boat power managment ready. V1");
+    Serial1.println("INIT: Boat power managment ready. V1");
     AddEvent(STARTED_EVENT, 1);
 
     digitalWrite(LED_BUILTIN, LOW);
@@ -273,7 +310,8 @@ void setup()
             AddPowerItem(i, HIGH, FIRST_POWER_UP_TIMEOUT);
         }
     }
-    
+
+    ToggleLED();    
 }
 
 void loop()
@@ -300,6 +338,8 @@ void loop()
                 line[lineIndex++] = ch;
             }
         }
+
+        ToggleLED();
     }
 
     auto button = digitalRead(BUTTON_PIN);
@@ -328,6 +368,11 @@ void loop()
     {
         if(!tasks[i].done && tasks[i].delay < millis())
         {
+            Serial1.print("D - PIN=");
+            Serial1.print(tasks[i].pin);
+            Serial1.print(", S=");
+            Serial1.print(tasks[i].state);
+            Serial1.println(" done");
             auto pin = pins[tasks[i].pin].pin;
             digitalWrite(pin, tasks[i].state);
             pins[tasks[i].pin].lastState = tasks[i].state;

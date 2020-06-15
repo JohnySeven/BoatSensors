@@ -5,53 +5,81 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-public class SerialInterface
+namespace PowerManagementControl.Services
 {
-    SerialPort _port;
-    readonly ILogger<SerialInterface> _logger;
-
-    public SerialInterface(IConfiguration configuration, ILogger<SerialInterface> logger)
+    public class SerialInterface : ISerialInterface
     {
-        _logger = logger;
-        var serialSection = configuration.GetSection("Serial");
-        _logger.LogInformation("Opening port...");
-        _port = new SerialPort(serialSection.GetValue("port", ""), serialSection.GetValue("BaudRate", 115200));
+        SerialPort _port;
+        readonly ILogger<SerialInterface> _logger;
+        private readonly bool _logCommunication;
 
-        _port.Open();
-        _logger.LogInformation("Port is open");
-    }
-
-    public bool RunQuery(string query, out string[] response)
-    {
-        _port.WriteLine(query);
-
-        var lines = new List<string>();
-
-        Thread.Sleep(100);
-
-        while(_port.BytesToRead > 0)
+        public SerialInterface(IConfiguration configuration, ILogger<SerialInterface> logger)
         {
-            var line = _port.ReadLine();
+            _logger = logger;
+            var serialSection = configuration.GetSection("Serial");
+            _logger.LogInformation("Opening port...");
+            _port = new SerialPort(serialSection.GetValue("port", ""), serialSection.GetValue("BaudRate", 115200));
+            _port.DtrEnable = false;
 
-            //_logger.LogDebug("LINE: " + line);
-
-            if(line.StartsWith("OK"))
-            {
-                response = lines.ToArray();
-                return true;
-            }
-            else if(line.StartsWith("ERROR"))
-            {
-                response = new [] { line };
-
-                return false;
-            }
-            else
-            {
-                lines.Add(line);
-            }
+            _logCommunication = serialSection.GetValue("Log", false);
+            _port.ReadTimeout = 1000;
+            _port.Open();
+            _logger.LogInformation("Port is open");
         }
-        response = null;
-        return false;
+
+        public bool RunQuery(string query, out string[] response)
+        {
+            var ret = false;
+            try
+            {
+                if (_logCommunication)
+                {
+                    _logger.LogDebug($">>> " + query);
+                }
+
+                _port.DiscardInBuffer();
+                _port.DiscardOutBuffer();
+                _port.WriteLine(query);
+                Thread.Sleep(250);
+
+                var lines = new List<string>();
+                var timeout = DateTime.UtcNow.AddSeconds(5);
+
+                while (timeout > DateTime.UtcNow)
+                {
+                    var line = _port.ReadLine();
+                    _logger.LogDebug($"<<< " + line);
+
+                    //_logger.LogDebug("LINE: " + line);
+
+                    if (line.StartsWith("OK") || line.StartsWith("Done"))
+                    {
+                        response = lines.ToArray();
+                        return true;
+                    }
+                    else if (line.StartsWith("ERROR"))
+                    {
+                        response = new[] { line };
+                        return false;
+                    }
+                    else
+                    {
+                        lines.Add(line);
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                _logger.LogWarning("Read timeout!");
+                //close and open port
+                _port.Close();
+                _port.Open();
+            }
+
+            _logger.LogError("Power module communication timeout!");
+
+            response = null;
+            return ret;
+        }
     }
 }
