@@ -35,7 +35,7 @@ void ADS1015Channel::update()
 {
     auto value = this->adc->readValue(this->index);
     auto voltage = (value * 0.1875)/1000; 
-    debugI("Reading ADC %d=%d, Voltage=%f.", this->index, value, voltage);
+    //debugI("Reading ADC %d=%d, Voltage=%f.", this->index, value, voltage);
     this->output = voltage;
     this->notify();
 }

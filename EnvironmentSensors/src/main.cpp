@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "sensesp_app.h"
+#include "sensesp_app_options.h"
 #include "sensors/analog_input.h"
 #include "transforms/linear.h"
 #include "signalk/signalk_output.h"
@@ -24,9 +25,14 @@ ReactESP app([] () {
   Debug.setSerialEnabled(true);
   #endif
 
-
   // Create the global SensESPApp() object.
-  sensesp_app = new SensESPApp();
+  sensesp_app = new SensESPApp([] (SensESPAppOptions*o)
+  {
+         o->setServerOptions("192.168.89.121", 3000)
+          ->setWifiOptions("DryII", "wifi4boat")
+          ->setHostName("environ")
+          ->setStandardSensors();
+  });
   // The "Configuration path" is combined with "/config" to formulate a URL
   // used by the RESTful API for retrieving or setting configuration data.
   // It is ALSO used to specify a path to the SPIFFS file system

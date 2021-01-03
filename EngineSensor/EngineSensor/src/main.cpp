@@ -57,18 +57,23 @@ ReactESP app([]() {
   // connected to the microcontroller, you will have a configuration path
   // for each of them, such as config_path_portEngine = "/sensors/portEngine/rpm"
   // and config_path_starboardEngine = "/sensor/starboardEngine/rpm".
-  const char* config_path = "/sensors/engine_rpm";
+  //const char* config_path = "/sensors/engine_rpm";
 
   // These two are necessary until a method is created to synthesize them. Everything
   // after "/sensors" in each of these ("/engine_rpm/calibrate" and "/engine_rpm/sk")
   // is simply a label to display what you're configuring in the Configuration UI. 
   const char* config_path_calibrate = "/sensors/engine_rpm/calibrate";
   const char* config_path_skpath = "/sensors/engine_rpm/sk";
-  const char* config_path_temp_sk = "propulsion.left.temperature";
-  const char* config_path_temp_sensor = "/sensors/temp/sensor";
-  const char* config_path_temp_offset = "/sensors/temp/offset";
-  const char* config_path_adc_linear = "/sensors/adc/offset";
-  const char* config_path_adc_channel = "/sensors/adc/channel";
+  //const char* config_path_temp_sk = "propulsion.any.temperature";
+  const char* config_path_temp_sensor = "/sensors/temp/sk/";
+  const char* config_path_temp_device = "/sensors/temp/device/";
+  const char* config_path_temp_offset = "/sensors/temp/calibration/";
+  const char* config_path_adc_linear = "/sensors/adc/calibration/";
+  const char* config_path_adc_channel = "/sensors/adc/sk/";
+
+  char* left_exaustTemperature = "propulsion.left.exhaustTemperature";
+  char* right_exaustTemperature  = "propulsion.right.exhaustTemperature";
+  char* other_Temperature  = "sensor.temperature";
 //////////
 // connect a RPM meter. A DigitalInputCounter implements an interrupt
 // to count pulses and reports the readings every read_delay ms
@@ -81,11 +86,11 @@ const uint read_delay = 500;
 
 
   // Wire it all up by connecting the producer directly to the consumer
-  auto* pSensor = new DigitalInputCounter(14, INPUT_PULLUP, RISING, read_delay);
+  /*auto* pSensor = new DigitalInputCounter(14, INPUT_PULLUP, RISING, read_delay);
 
   pSensor->connectTo(new Frequency(multiplier, config_path_calibrate))  // connect the output of pSensor to the input of Frequency()
          ->connectTo(new SKOutputNumber(sk_path, config_path_skpath));   // connect the output of Frequency() to a SignalK Output as a number
-
+  */
 
   auto* adc = new ADS1015(0x49, "");
 
@@ -101,18 +106,36 @@ const uint read_delay = 500;
            ->connectTo(new SKOutputNumber(String(adc_sk_path) + String(i), String(config_path_adc_channel) + String(i)));
   }
 
-  auto*owSensors = new DallasTemperatureSensors(ONE_WIRE_BUS, config_path_temp_sensor);
+  auto*owSensors = new DallasTemperatureSensors(ONE_WIRE_BUS, "");
 
-  OWDevAddr*tempAddress;
+  //OWDevAddr*tempAddress;
   const float temp_multiplier = 1.0;
   const float temp_offset = 0.0;
   uint8_t count = owSensors->sensors->getDeviceCount();
 
   for(int i = 0; i < count; i++)
   {
-    (new OneWireTemperature(owSensors))
+    String skPath;
+
+    if(i == 0)
+    {
+      skPath = String(left_exaustTemperature);
+    }
+    else if(i == 1)
+    {
+      skPath = String(right_exaustTemperature);
+    }
+    else
+    {
+      skPath = String(other_Temperature) + String(i);
+    }
+    
+
+    //debugI("Onewire config file: %s for index %d", skConfig.c_str(), i);
+
+    (new OneWireTemperature(owSensors, String(config_path_temp_device) + String(i)))
             ->connectTo(new Linear(temp_multiplier, temp_offset, String(config_path_temp_offset) + String(i)))
-            ->connectTo(new SKOutputNumber(String(config_path_temp_sk) + String(i), String(config_path_temp_sensor) + String(i)));
+            ->connectTo(new SKOutputNumber(skPath, ""));
     //auto*tempSensor = new OneWireTemperature(owSensors, String(config_path_tempsensor) + String(i));
   }
 

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SimpleCLI.h>
 #include "main.h"
+
 #define MAX_LINE_SIZE 128
 #define SWITCH_PIN 12
 #define SYSTEM_UP_PIN 11
@@ -114,11 +115,11 @@ void loop()
     }
 
     PinStatus systemUp = digitalRead(SYSTEM_UP_PIN);
-    PinStatus sense = LOW;//digitalRead(SENSE_PIN);
+    //PinStatus sense = LOW;//digitalRead(SENSE_PIN);
     PinStatus switchState = digitalRead(SWITCH_PIN);
     PinStatus state = LOW;
     
-    if(systemUp == HIGH | sense == HIGH | switchState == HIGH)
+    if((systemUp == HIGH) || (switchState == HIGH))
     {
         state = HIGH;
     }
@@ -144,11 +145,8 @@ void loop()
         {
             if(state == HIGH)
             {
-                if(GetVin() < 7.0f || GetVin() > 12.5f)
-                {
-                    Serial.println("POWERING UP...");
-                    stateChangeAt = millis() + POWER_UP_DELAY;                
-                }
+                Serial.println("POWERING UP...");
+                stateChangeAt = millis() + POWER_UP_DELAY; 
             }
             else
             {
